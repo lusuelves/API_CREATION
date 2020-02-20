@@ -43,11 +43,30 @@ def add_user(chat_title):
     user_id = add_chat_to_user(chat_id)
     add_user_to_chat(chat_title, user_id)
     return dumps(chat_id)
-    
 
-        
+def new_message(user_id,chat_id):
+    messages = client.get_default_database()["Messages"]
+    message = input('Write message: ')   
+    return messages.insert({'text':message,'author':user_id,'conversation':chat_id}) 
+
+def add_message(chat_title):
+    (chat_id, convers) = get_chat(chat_title)
+    (user_id, users) = get_user()
+    if user_in_chat(user_id,chat_id,convers):
+        message_id = new_message(user_id, chat_id)
+        add_message_to_chat(chat_id,convers,message_id)
+        add_message_to_user(user_id,users,message_id)
+        return dumps(message_id)
+    else:
+        print("You are not in the chat")
+        add_message(chat_title)
     
+def add_message_to_chat(chat_id,convers,message):
+    return convers.update({'_id':chat_id},{'$push':{'messages':message}})
     
-    
-    
+def add_message_to_user(user_id,users,message_id):
+    return users.update({'_id':user_id},{'$push':{'messages':message_id}})
+
+def user_in_chat(user_id,chat_id,convers):
+    return user_id in convers.find_one({'_id':chat_id})['participants']
     

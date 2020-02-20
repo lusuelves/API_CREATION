@@ -10,7 +10,7 @@ from flask import Flask, request
 import random
 from companies import getCompanyWithName
 from createUser import createUser
-from conversations import createChat, add_user
+from conversations import createChat, add_user, add_message
 
 app = Flask(__name__)
 
@@ -44,5 +44,9 @@ def newChat(title):
 @app.route('/chat/<chat_title>/adduser')
 def addUserToChat(chat_title):
     return add_user(chat_title)
+
+@app.route('/chat/<chat_title>/addmessage')
+def addMessageToChat(chat_title):
+    return add_message(chat_title)
 
 app.run("0.0.0.0", 5000, debug=True)

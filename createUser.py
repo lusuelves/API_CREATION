@@ -9,7 +9,6 @@ Created on Thu Feb 20 17:18:24 2020
 from pymongo import MongoClient
 #from errorHandler import jsonErrorHandler
 from bson.json_util import dumps
-import re
 # Connect to the database
 client = MongoClient("mongodb://localhost/ChatWithHeart")
 
@@ -20,5 +19,5 @@ def createUser(name):
     while users.find_one({'username': name}):
         name = input("Enter another username : ") 
         print(name)
-    users.insert({'username': name, 'chats': []})
+    users.insert({'username': name, 'chats': [], 'messages':[]})
     return dumps(users.find_one({'username':name})['_id'])
