@@ -16,8 +16,8 @@ client = MongoClient("mongodb://localhost/ChatWithHeart")
 #@jsonErrorHandler
 def createUser(name):
     users = client.get_default_database()["Users"]
-    while users.find_one({'username': name}):
-        name = input("Enter another username : ") 
-        print(name)
-    users.insert({'username': name, 'chats': [], 'messages':[]})
-    return dumps(users.find_one({'username':name})['_id'])
+    if users.find_one({'username': name}):
+        return False
+    else:
+        users.insert({'username': name, 'chats': [], 'messages':[]})
+        return dumps(users.find_one({'username':name})['_id'])
