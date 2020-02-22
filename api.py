@@ -10,7 +10,7 @@ from flask import Flask, request,render_template
 import random
 from companies import getCompanyWithName
 from createUser import createUser
-from conversations import createChat, add_user, add_message, get_messages_from_chat, get_messages_from_user,get_sentiments_from_chat, recommend, who_are_you           
+from conversations import createChat, add_user, add_message, get_messages_from_chat, get_messages_from_user,get_sentiments_from_chat, recommend, who_are_you, exist_user, get_chat_title        
 
 app = Flask(__name__)
 
@@ -26,8 +26,25 @@ def hello():
             <form action="/user/create">
             <input type="submit" value="Create User" />
             </form>
+            <form action="/user/login">
+            <input type="submit" value="Log in"/>
+            </form>
             """
-
+@app.route('/user/login')
+def login():
+        return  """
+            <form action="/who" method="post">
+                User Name: <input type="text" name="first_name">  <br />
+                <input type="submit" name= "form" value="Submit" />
+            </form>
+        """
+        
+@app.route('/user/<username>')
+def welcome(username):
+        return """
+            <h1>Welcome {username}</h1>
+            """.format(username=username)
+  
 @app.route('/user/create/<name>')
 def create(name):
     return createUser(name)
@@ -71,9 +88,50 @@ def who():
                         <input type="submit" name= "form" value="Submit" />
             </form>
             """.format(first_name=first_name)
+    elif exist_user(first_name):
+        chats = [get_chat_title(chat_id) for chat_id in  exist_user(first_name)]
+        buttons = ""
+        for chat in chats:
+            buttons += """<form action="/user/{first_name}/chat/{chat}">
+            <input type="submit" value={chat} />
+            </form>""".format(chat=chat, first_name=first_name)
+        return """
+            <h1>Welcome back {first_name}</h1>
+            <form action="/{first_name}/newchat" method="post">
+                        Chat name: <input type="text" name="chat_title">  <br />
+                        <input type="submit" name= "form" value="Submit" />
+            </form>
+            <form action="/user/{first_name}/recommend">
+                <input type="submit" value='Get recommendation' />
+            </form>
+            {buttons}
+            """.format(first_name=first_name, buttons=buttons )
     else:
         return 'Username already exists'
+    
+@app.route('/user/<username>/chat/<chat_title>', methods=['POST','GET'])
+def print_chats(username,chat_title):
+    messages = get_messages_from_chat(chat_title)
+    if request.form:
+        new_message = request.form['new_message']
+        print(new_message)
+        add_message(chat_title,username, new_message)
+    return """
+        {messages}
+        <form action="/user/{username}/chat/{chat}" method="post">
+                        New message: <input type="text" name="new_message">  <br />
+                        <input type="submit" name= "form" value="Submit" />
+        </form>
+        <form action="/chat/{chat}/sentiment">
+            <input type="submit" value="Get sentiment"/>
+        </form>
         
+    """.format(messages=messages,username=username,chat=chat_title)
+
+@app.route('/chat/{chat}/sentiment')
+def get_sentiment(chat):
+    return get_sentiments_from_chat(chat)
+
 @app.route('/<username>/newchat', methods=['POST'] )
 def newchat(username):
     chat_title = request.form['chat_title']
