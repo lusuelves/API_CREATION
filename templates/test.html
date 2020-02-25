@@ -1,23 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html style="height:100%">
     <head>
         <link rel="stylesheet" type="text/css" href="static/test.css">
         <title>
-            CV - Rogier
+            Chat with the heart
         </title>
     </head>
-    <body>
-        <h3>
-            Study
-        </h3>
+    <body style="text-align: center; border:solid; height:80%;margin:50px;">
+        <div style="margin:18%;vertical-align:middle">
+        <h2>
+            Create User
+        </h2>
         <p>
-            At my study we learn Python.<br>
-            This is a sall example:<br>
+            All the messages you write in this chat will
+            be subdued to exhaustive analysis:<br>
             <form action="/who" method="post">
-                First Name: <input type="text" name="first_name">  <br />
-                Last Name: <input type="text" name="last_name" />
-                <input type="submit" name= "form" value="Submit" />
+                Username: <br>
+                <input type="text" name="first_name" style="margin:10px">  <br />
+                <input type="submit" name= "form" value="Create" style="background-color:pink;padding:10px;margin:10px" />
+            </form>
+            <form action="/">
+                <input type="submit" value="Home" style = "background-color:pink;padding:10px"/>
             </form>
         </p>
+        </div>
     </body>
 </html>
